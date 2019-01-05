@@ -3,13 +3,13 @@ package si.fri.rso.projekt.deliverer.models;
 public class Deliverer {
 
     private int delivererID;
-    private int queueID;
-    private String name;
+    private String firstName;
+    private String lastName;
 
-    public Deliverer(int delivererID, int queueID, String name) {
+    public Deliverer(int delivererID, String firstName, String lastName) {
         this.delivererID = delivererID;
-        this.queueID = queueID;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public int getDelivererID() {
@@ -20,19 +20,20 @@ public class Deliverer {
         this.delivererID = delivererID;
     }
 
-    public int getQueueID() {
-        return queueID;
+
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setQueueID(int queueID) {
-        this.queueID = queueID;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getName() {
-        return name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

@@ -39,8 +39,8 @@ public class MongoOrder {
         for(Document curr : orderCollection.find()) {
 
             Deliverer deliverer = new Deliverer(curr.getInteger("delivererID"),
-                                    curr.getInteger("queueID"),
-                                    curr.getString("name"));
+                                        curr.getString("firstName"),
+                                        curr.getString("lastName"));
 
             results.add(deliverer);
         }
@@ -63,7 +63,7 @@ public class MongoOrder {
 
 
         return new Deliverer(result.getInteger("delivererID"),
-                result.getInteger("queueID"),
-                result.getString("name"));
+                result.getString("firstName"),
+                result.getString("lastName"));
     }
 }
