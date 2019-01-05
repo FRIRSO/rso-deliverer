@@ -1,5 +1,6 @@
 package si.fri.rso.projekt.deliverer.models;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
@@ -7,11 +8,12 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MongoOrder {
+public class MongoDeliverer {
 
 
     private final String DBUser       = "root";
@@ -65,5 +67,27 @@ public class MongoOrder {
         return new Deliverer(result.getInteger("delivererID"),
                 result.getString("firstName"),
                 result.getString("lastName"));
+    }
+
+    public void createDeliverer(JSONObject json) {
+        MongoClient client = connectDB();
+        MongoDatabase db = client.getDatabase(DBName);
+        MongoCollection<Document> bc = db.getCollection(DBCollection);
+
+        Document myDoc = bc.find().sort(new BasicDBObject("delivererID",-1)).first();
+        int last = myDoc.getInteger("delivererID");
+
+        Document doc = Document.parse(json.toString());
+        doc.append("delivererID", last + 1);
+        bc.insertOne(doc);
+    }
+
+    public void deleteDeliverer(int delivererID) {
+        MongoClient client = connectDB();
+        MongoDatabase db = client.getDatabase(DBName);
+        MongoCollection<Document> bc = db.getCollection(DBCollection);
+
+        Bson filter = Filters.eq("delivererID", delivererID);
+        bc.deleteOne(filter);
     }
 }

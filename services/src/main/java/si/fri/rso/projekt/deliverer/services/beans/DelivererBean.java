@@ -3,8 +3,9 @@ package si.fri.rso.projekt.deliverer.services.beans;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
 //import si.fri.rso.projekt.buyers.models.Buyer;
+import org.json.JSONObject;
 import si.fri.rso.projekt.deliverer.services.configuration.AppProperties;
-import si.fri.rso.projekt.deliverer.models.MongoOrder;
+import si.fri.rso.projekt.deliverer.models.MongoDeliverer;
 import si.fri.rso.projekt.deliverer.models.Deliverer;
 
 import javax.annotation.PostConstruct;
@@ -97,13 +98,13 @@ public class DelivererBean {
     }
 
     public List<Deliverer> getDeliverers() {
-        MongoOrder mb = new MongoOrder();
+        MongoDeliverer mb = new MongoDeliverer();
 
         return mb.getAllDeliverers();
     }
 
     public Deliverer getDeliverer(Integer delivererID) {
-        MongoOrder mb = new MongoOrder();
+        MongoDeliverer mb = new MongoDeliverer();
 
         Deliverer deliverer = mb.getDeliverer(delivererID);
 
@@ -112,5 +113,17 @@ public class DelivererBean {
         }
 
         return deliverer;
+    }
+
+    public void createDeliverer(JSONObject json) {
+        MongoDeliverer md = new MongoDeliverer();
+
+        md.createDeliverer(json);
+    }
+
+    public void deleteDeliverer(int delivererID) {
+        MongoDeliverer mb = new MongoDeliverer();
+
+        mb.deleteDeliverer(delivererID);
     }
 }

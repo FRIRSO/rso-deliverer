@@ -1,5 +1,6 @@
 package si.fri.rso.projekt.deliverer.api.v1.resources;
 
+import org.json.JSONObject;
 import si.fri.rso.projekt.deliverer.services.beans.DelivererBean;
 import si.fri.rso.projekt.deliverer.models.Deliverer;
 
@@ -72,5 +73,20 @@ public class DelivererApi {
         else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+    }
+
+    @POST
+    public Response createDeliverer(String deliverer) {
+        delivererBean.createDeliverer(new JSONObject(deliverer));
+
+        return Response.status(Response.Status.CREATED).build();
+    }
+
+    @GET
+    @Path("/delete/{delivererID}")
+    public Response deleteBuyer(@PathParam("delivererID") Integer delivererID) {
+        delivererBean.deleteDeliverer(delivererID);
+
+        return Response.status(Response.Status.OK).build();
     }
 }
