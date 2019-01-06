@@ -46,6 +46,8 @@ public class DelivererBean {
     private Optional<String> containerUrl;
 
     private String queueUrl = "http://localhost:8084";
+    private String orderUrl = "http://localhost:8082";
+    private String buyerUrl = "http://localhost:8081";
 
     @PostConstruct
     private void init() {
@@ -142,6 +144,35 @@ public class DelivererBean {
                         .request()
                         .accept(MediaType.APPLICATION_JSON)
                         .get(String.class);
+            }
+            catch (WebApplicationException | ProcessingException e) {
+                System.out.println("wrong");
+            }
+        }
+        System.out.println("errror: sth went wring!");
+        return "Sth went wrong!";
+    }
+
+    public String getAddressByOrderID(int orderID) {
+        if(!orderUrl.isEmpty()) {
+            try {
+                String orderResponse = httpClient.target(orderUrl + "/v1/orders/" + orderID)
+                                    .request()
+                                    .accept(MediaType.APPLICATION_JSON)
+                                    .get(String.class);
+
+                JSONObject jsonOrder = new JSONObject(orderResponse);
+                int buyerID = jsonOrder.getInt("buyerID");
+
+                String buyerResponse = httpClient.target(buyerUrl + "/v1/buyers/" + buyerID)
+                                    .request()
+                                    .accept(MediaType.APPLICATION_JSON)
+                                    .get(String.class);
+
+                JSONObject jsonBuyer = new JSONObject(buyerResponse);
+                JSONObject jsonAddress = jsonBuyer.getJSONObject("address");
+
+                return jsonAddress.toString();
             }
             catch (WebApplicationException | ProcessingException e) {
                 System.out.println("wrong");
