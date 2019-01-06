@@ -89,4 +89,11 @@ public class DelivererApi {
 
         return Response.status(Response.Status.OK).build();
     }
+
+    @GET
+    @Path("/orders/{delivererID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delivererOrders(@PathParam("delivererID") Integer delivererID) {
+        return Response.ok(delivererBean.getOrdersByDelivererID(delivererID)).build();
+    }
 }

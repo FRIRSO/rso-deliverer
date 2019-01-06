@@ -3,6 +3,7 @@ package si.fri.rso.projekt.deliverer.services.beans;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
 //import si.fri.rso.projekt.buyers.models.Buyer;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import si.fri.rso.projekt.deliverer.services.configuration.AppProperties;
 import si.fri.rso.projekt.deliverer.models.MongoDeliverer;
@@ -15,6 +16,11 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -38,6 +44,8 @@ public class DelivererBean {
     @Inject
     @DiscoverService("rso-buyer")
     private Optional<String> containerUrl;
+
+    private String queueUrl = "http://localhost:8084";
 
     @PostConstruct
     private void init() {
@@ -125,5 +133,21 @@ public class DelivererBean {
         MongoDeliverer mb = new MongoDeliverer();
 
         mb.deleteDeliverer(delivererID);
+    }
+
+    public String getOrdersByDelivererID(int delivererID){
+        if(!queueUrl.isEmpty()) {
+            try {
+                return httpClient.target(queueUrl + "/v1/queues/" + delivererID)
+                        .request()
+                        .accept(MediaType.APPLICATION_JSON)
+                        .get(String.class);
+            }
+            catch (WebApplicationException | ProcessingException e) {
+                System.out.println("wrong");
+            }
+        }
+        System.out.println("errror: sth went wring!");
+        return "Sth went wrong!";
     }
 }
