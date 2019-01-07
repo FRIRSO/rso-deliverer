@@ -39,15 +39,16 @@ public class DelivererBean {
 
     @Inject
     @DiscoverService("rso-queue")
-    private Optional<String> url;
+    private Optional<String> baseUrlQueue;
 
     @Inject
     @DiscoverService("rso-buyer")
-    private Optional<String> containerUrl;
+    private Optional<String> baseUrlBuyeer;
 
-    private String queueUrl = "http://localhost:8084";
-    private String orderUrl = "http://localhost:8082";
-    private String buyerUrl = "http://localhost:8081";
+    @Inject
+    @DiscoverService("rso-order")
+    private Optional<String> baseUrlOrder;
+
 
     @PostConstruct
     private void init() {
@@ -66,46 +67,6 @@ public class DelivererBean {
         appProperties.setExternalServicesEnabled(config);
     }
 
-
-    //private List<Buyer> getObjects(String json) throws IOException {
-    //    return json == null ? new ArrayList<>() : objectMapper.readValue(json,
-    //            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).getTypeFactory().constructCollectionType(List.class, Buyer.class));
-    //}
-    /*public List<Buyer> getMessageDiscovery(){
-        if(url.isPresent()) {
-            try {
-                return httpClient
-                        .target(url.get() + "/v1/buyers")
-                        .request(MediaType.APPLICATION_JSON)
-                        .get(new GenericType<List<Buyer>>() {
-                        });
-            }
-            catch (WebApplicationException | ProcessingException e) {
-                System.out.println("errror: " + url.get() + "\t " + e.getMessage());
-                //throw new InternalServerErrorException(e.getMessage());
-                return null;
-            }
-        }
-        return null;
-    }*/
-
-
-    public String getMessageDiscovery2(){
-        if(containerUrl.isPresent()) {
-            try {
-                return httpClient
-                        .target(containerUrl.get() + "/v1/buyers/test")
-                        .request()
-                        .get(String.class);
-            }
-            catch (WebApplicationException | ProcessingException e) {
-                System.out.println("errror: " + containerUrl.get() + "\t " + e.getMessage());
-                return "Sth went wrong!";
-            }
-        }
-        System.out.println("errror: sth went wring!");
-        return "Sth went wrong!";
-    }
 
     public List<Deliverer> getDeliverers() {
         MongoDeliverer mb = new MongoDeliverer();
@@ -138,9 +99,9 @@ public class DelivererBean {
     }
 
     public String getOrdersByDelivererID(int delivererID){
-        if(!queueUrl.isEmpty()) {
+        if(baseUrlQueue.isPresent()) {
             try {
-                return httpClient.target(queueUrl + "/v1/queues/" + delivererID)
+                return httpClient.target(baseUrlQueue.get() + "/v1/queues/" + delivererID)
                         .request()
                         .accept(MediaType.APPLICATION_JSON)
                         .get(String.class);
@@ -154,9 +115,9 @@ public class DelivererBean {
     }
 
     public String getAddressByOrderID(int orderID) {
-        if(!orderUrl.isEmpty()) {
+        if(baseUrlOrder.isPresent() && baseUrlBuyeer.isPresent()) {
             try {
-                String orderResponse = httpClient.target(orderUrl + "/v1/orders/" + orderID)
+                String orderResponse = httpClient.target(baseUrlOrder.get() + "/v1/orders/" + orderID)
                                     .request()
                                     .accept(MediaType.APPLICATION_JSON)
                                     .get(String.class);
@@ -164,7 +125,7 @@ public class DelivererBean {
                 JSONObject jsonOrder = new JSONObject(orderResponse);
                 int buyerID = jsonOrder.getInt("buyerID");
 
-                String buyerResponse = httpClient.target(buyerUrl + "/v1/buyers/" + buyerID)
+                String buyerResponse = httpClient.target(baseUrlBuyeer.get() + "/v1/buyers/" + buyerID)
                                     .request()
                                     .accept(MediaType.APPLICATION_JSON)
                                     .get(String.class);
