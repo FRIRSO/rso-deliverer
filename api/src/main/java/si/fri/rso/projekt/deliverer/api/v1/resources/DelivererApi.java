@@ -18,20 +18,6 @@ public class DelivererApi {
     private DelivererBean delivererBean;
 
 
-    //@GET
-    //@Path("url")
-    //public Response test() {
-    //    return Response.status(Response.Status.OK).entity(delivererBean.getMessageDiscovery()).build();
-    //
-    //}
-
-    @GET
-    @Path("url2")
-    public Response test2() {
-        return Response.status(Response.Status.OK).entity(delivererBean.getMessageDiscovery2()).build();
-
-    }
-
     @GET
     @Path("service")
     public Response service() {
