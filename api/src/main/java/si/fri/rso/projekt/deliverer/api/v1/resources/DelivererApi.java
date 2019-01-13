@@ -89,4 +89,18 @@ public class DelivererApi {
     public Response delivererAddress(@PathParam("orderID") Integer orderID) {
         return Response.ok(delivererBean.getAddressByOrderID(orderID)).build();
     }
+
+    @GET
+    @Path("/paid/{orderID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response isOrderPaid(@PathParam("orderID") Integer orderID) {
+        return Response.ok(delivererBean.getPaidStatusByOrderID(orderID)).build();
+    }
+
+    @GET
+    @Path("/setPaid/{orderID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response setOrderPaid(@PathParam("orderID") Integer orderID) {
+        return Response.ok(delivererBean.setPaidStatusByOrderID(orderID)).build();
+    }
 }

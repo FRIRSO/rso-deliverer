@@ -43,11 +43,15 @@ public class DelivererBean {
 
     @Inject
     @DiscoverService("rso-buyer")
-    private Optional<String> baseUrlBuyeer;
+    private Optional<String> baseUrlBuyer;
 
     @Inject
     @DiscoverService("rso-order")
     private Optional<String> baseUrlOrder;
+
+    @Inject
+    @DiscoverService("rso-bill")
+    private Optional<String> baseUrlBill;
 
 
     @PostConstruct
@@ -115,7 +119,7 @@ public class DelivererBean {
     }
 
     public String getAddressByOrderID(int orderID) {
-        if(baseUrlOrder.isPresent() && baseUrlBuyeer.isPresent()) {
+        if(baseUrlOrder.isPresent() && baseUrlBuyer.isPresent()) {
             try {
                 String orderResponse = httpClient.target(baseUrlOrder.get() + "/v1/orders/" + orderID)
                                     .request()
@@ -125,7 +129,7 @@ public class DelivererBean {
                 JSONObject jsonOrder = new JSONObject(orderResponse);
                 int buyerID = jsonOrder.getInt("buyerID");
 
-                String buyerResponse = httpClient.target(baseUrlBuyeer.get() + "/v1/buyers/" + buyerID)
+                String buyerResponse = httpClient.target(baseUrlBuyer.get() + "/v1/buyers/" + buyerID)
                                     .request()
                                     .accept(MediaType.APPLICATION_JSON)
                                     .get(String.class);
@@ -141,5 +145,37 @@ public class DelivererBean {
         }
         System.out.println("errror: sth went wring!");
         return "Sth went wrong!";
+    }
+
+    public Boolean getPaidStatusByOrderID(int orderID){
+        if(baseUrlBill.isPresent()) {
+            try {
+                return httpClient.target(baseUrlBill.get() + "/v1/bills/paid/" + orderID)
+                        .request()
+                        .accept(MediaType.APPLICATION_JSON)
+                        .get(Boolean.class);
+            }
+            catch (WebApplicationException | ProcessingException e) {
+                System.out.println("wrong");
+            }
+        }
+        System.out.println("errror: sth went wring!");
+        return null;
+    }
+
+    public Boolean setPaidStatusByOrderID(int orderID){
+        if(baseUrlBill.isPresent()) {
+            try {
+                return httpClient.target(baseUrlBill.get() + "/v1/bills/setPaid/" + orderID)
+                        .request()
+                        .accept(MediaType.APPLICATION_JSON)
+                        .get(Boolean.class);
+            }
+            catch (WebApplicationException | ProcessingException e) {
+                System.out.println("wrong");
+            }
+        }
+        System.out.println("errror: sth went wring!");
+        return null;
     }
 }
